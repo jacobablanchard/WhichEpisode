@@ -9,18 +9,25 @@
     <StackLayout>
         <!-- Place new controls here -->
         <StackLayout Orientation="Horizontal">
-            <Label Text="Max Number:" VerticalOptions="Center" HorizontalOptions="CenterAndExpand"
-                   FontSize="Large"/>
-            <Entry Placeholder="Enter a number" Keyboard="Numeric" x:Name="EnteredNumber">
-                
-            </Entry> 
+            <SearchBar Placeholder="TV Show" x:Name="NametoSearch"/>
+            <Button Text="Search" Clicked="Button_Clicked"/>
+        </StackLayout>
 
-        </StackLayout>
-        <Button Text="Pick" Clicked="Button_Clicked" />
-        <StackLayout Orientation="Horizontal" Spacing="20">
-            <Label Text="Your Number is: " />
-            <Label x:Name="ChosenNumber"/>
-        </StackLayout>
+        <ListView x:Name="TVShowsList" ItemsSource="{Binding Path=TVSearchResults}">
+            <ListView.ItemTemplate>
+                <DataTemplate>
+                    <ViewCell BindingContext="TVSearchResult">
+                        <StackLayout Orientation="Horizontal">
+                            <Image Source ="{Binding Path=FullBannerURL} "/>
+                            
+                        </StackLayout>
+                    </ViewCell>
+                </DataTemplate>
+            </ListView.ItemTemplate>
+        </ListView>
+
+
+
     </StackLayout>
 
 </ContentPage>

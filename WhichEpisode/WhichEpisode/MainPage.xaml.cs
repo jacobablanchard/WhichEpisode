@@ -5,6 +5,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Xamarin.Forms;
+using WhichEpisode.Controllers;
+using WhichEpisode.Models;
 
 namespace WhichEpisode
 {
@@ -13,21 +15,25 @@ namespace WhichEpisode
     [DesignTimeVisible(false)]
     public partial class MainPage : ContentPage
     {
+        List<TVSearchResult> TVSearchResults;
         public MainPage() {
             InitializeComponent();
+            TVSearchResults = new List<TVSearchResult>();
+            MovieDBAPIController.Initialize();
         }
 
-        private void Button_Clicked(object sender, EventArgs e) {
-            int maxNum;
-            bool res = int.TryParse(EnteredNumber.Text,out maxNum);
-            if (res && maxNum >= 1) {
-                Random random = new Random();
-                int a = random.Next(1, maxNum + 1);
-                ChosenNumber.Text = a.ToString();
-            }
-            else {
-                DisplayAlert("Invalid Input", "Please only input a number in here", "OK");
-            }
+        private async void Button_Clicked(object sender, EventArgs e) {
+            TVSearchResults tVSearch = await MovieDBAPIController.SearchForShow(NametoSearch.Text);
+            TVSearchResults = tVSearch.data.ToList();
+            //foreach(TVSearchResult res in tVSearch.data.ToList()) {
+            //    StackLayout row = new StackLayout();
+            //    Image image = new Image();
+            //    image.Source = $"https://api.thetvdb.com" + res.banner;
+            //    Label showName = new Label() { Text = res.seriesName };
+            //    row.Children.Add(image);
+            //    row.Children.Add(showName);
+                
+            //}
         }
     }
 }
