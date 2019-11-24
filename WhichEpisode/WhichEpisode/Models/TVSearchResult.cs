@@ -16,6 +16,10 @@ namespace WhichEpisode.Models
         public string slug { get; set; }
         public string status { get; set; }
 
-        public string FullBannerURL { get { return $"https://api.thetvdb.com" + banner; } }
+        public string FullBannerURL { get {
+                string temp;
+                if (banner.StartsWith($"/bannershttps")) { temp = banner.Replace($"/banners", ""); } else if(banner.Contains("https")){ temp = banner; } else { temp = $"https://thetvdb.com" + banner; }
+                return temp;} 
+        }
     }
 }

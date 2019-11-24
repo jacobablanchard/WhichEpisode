@@ -19,21 +19,15 @@ namespace WhichEpisode
         public MainPage() {
             InitializeComponent();
             TVSearchResults = new List<TVSearchResult>();
-            MovieDBAPIController.Initialize();
+            Task<bool> temp = MovieDBAPIController.Initialize();
+            if (!temp.Result)
+                DisplayAlert("Error","Error authenticating","OK");
         }
 
         private async void Button_Clicked(object sender, EventArgs e) {
             TVSearchResults tVSearch = await MovieDBAPIController.SearchForShow(NametoSearch.Text);
             TVSearchResults = tVSearch.data.ToList();
-            //foreach(TVSearchResult res in tVSearch.data.ToList()) {
-            //    StackLayout row = new StackLayout();
-            //    Image image = new Image();
-            //    image.Source = $"https://api.thetvdb.com" + res.banner;
-            //    Label showName = new Label() { Text = res.seriesName };
-            //    row.Children.Add(image);
-            //    row.Children.Add(showName);
-                
-            //}
+            TVShowsList.ItemsSource = TVSearchResults;
         }
     }
 }

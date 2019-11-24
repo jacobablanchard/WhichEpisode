@@ -16,7 +16,7 @@ namespace WhichEpisode
         public static string user_key = "5DD750053C3102.24389341";
         public static string user_name = "skittlemann";
         private static string token;
-        public static async void Initialize() {
+        public static async Task<bool> Initialize() {
             Client = new HttpClient();
             Client.BaseAddress = new Uri("https://api.thetvdb.com");
             Client.DefaultRequestHeaders.Accept.Clear();
@@ -30,9 +30,14 @@ namespace WhichEpisode
             var json = JsonConvert.SerializeObject(obj);
             var data = new StringContent(json, Encoding.UTF8, "application/json");
             var response = await Client.PostAsync("login", data);
-            var tokenResponse = await response.Content.ReadAsAsync<Token>();
-            token = tokenResponse.token;
-            Client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
+            if (response.IsSuccessStatusCode) {
+                var tokenResponse = await response.Content.ReadAsAsync<Token>();
+                token = tokenResponse.token;
+                Client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
+                return true;
+            }
+            else
+                return false;
         }
 
         public static async Task<TVSearchResults> SearchForShow(string show) {
