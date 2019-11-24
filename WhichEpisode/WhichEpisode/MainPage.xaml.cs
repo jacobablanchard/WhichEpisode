@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Xamarin.Forms;
 
+
 namespace WhichEpisode
 {
     // Learn more about making custom code visible in the Xamarin.Forms previewer
@@ -15,6 +16,7 @@ namespace WhichEpisode
     {
         public MainPage() {
             InitializeComponent();
+            
         }
 
         private void Button_Clicked(object sender, EventArgs e) {
