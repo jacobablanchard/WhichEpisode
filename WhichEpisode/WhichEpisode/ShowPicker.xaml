@@ -1,0 +1,43 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:d="http://xamarin.com/schemas/2014/forms/design"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:ffimageLoader="clr-namespace:FFImageLoading.Forms;assembly=FFImageLoading.Forms"
+             mc:Ignorable="d"
+             x:Class="WhichEpisode.ShowPicker">
+    <ContentPage.Content>
+        <StackLayout VerticalOptions="CenterAndExpand">
+            <ffimageLoader:CachedImage x:Name="ShowBanner"/>
+            <StackLayout Orientation="Horizontal">
+                <Label Text="Number of seasons: "/>
+                <Label x:Name="NumberOfSeasons"/>
+            </StackLayout>
+            <StackLayout Orientation="Horizontal">
+                <Label Text="Number of Episodes: "/>
+                <Label x:Name="NumberOfEpisodes"/>
+            </StackLayout>
+
+            <Button Text="Pick an Episode!" Clicked="Button_Clicked"/>
+
+            <StackLayout Orientation="Horizontal">
+                <Label Text="Your episode:"/>
+                <Label x:Name="EpisodeName"/>
+            </StackLayout>
+            <StackLayout Orientation="Horizontal">
+                <Label Text="Season: "/>
+                <Label x:Name="SelectedSeason"/>
+            </StackLayout>
+            <StackLayout Orientation="Horizontal">
+                <Label Text="Episode: "/>
+                <Label x:Name="SelectedEpisode"/>
+            </StackLayout>
+            <ffimageLoader:CachedImage x:Name="EpisodePicture"/>
+            <StackLayout Orientation="Horizontal">
+                <Label Text="Overview: "/>
+                <Label x:Name="Overview" />
+            </StackLayout>
+
+        </StackLayout>
+    </ContentPage.Content>
+</ContentPage>

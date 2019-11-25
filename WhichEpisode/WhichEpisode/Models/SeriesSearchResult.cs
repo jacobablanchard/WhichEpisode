@@ -4,7 +4,7 @@ using System.Text;
 
 namespace WhichEpisode.Models
 {
-    public class TVSearchResult
+    public class SeriesSearchResult
     {
         public string[] aliases { get; set; }
         public string banner { get; set; }

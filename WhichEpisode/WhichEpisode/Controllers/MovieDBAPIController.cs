@@ -4,6 +4,7 @@ using System.Text;
 using System.Net.Http;
 using System.Threading.Tasks;
 using WhichEpisode.Models;
+using WhichEpisode.Controllers;
 using Newtonsoft.Json;
 using System.Web;
 
@@ -19,9 +20,29 @@ namespace WhichEpisode
         public static async Task<bool> Initialize() {
             Client = new HttpClient();
             Client.BaseAddress = new Uri("https://api.thetvdb.com");
+            Client.Timeout = TimeSpan.FromSeconds(10);
             Client.DefaultRequestHeaders.Accept.Clear();
             Client.DefaultRequestHeaders.Accept.Add(new System.Net.Http.Headers.MediaTypeWithQualityHeaderValue("application/json"));
             // Get a token
+            bool performAPICall = true;
+            if (FileController.DoesTokenFileExist()) {
+                TimeSpan res = DateTime.Now - FileController.GetTokenDate();
+                if (res.Hours < 24) {
+                    Client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", FileController.GetToken());
+                    HttpResponseMessage requestResult = await Client.GetAsync("refresh_token").ConfigureAwait(false);
+                    if (requestResult.IsSuccessStatusCode) {
+                        var newTokenResponse = await requestResult.Content.ReadAsAsync<Token>();
+                        token = newTokenResponse.token;
+                        Client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
+                        FileController.SaveToken(token);
+                        performAPICall = false;
+                        return true;
+                    }
+                    else {
+                        return false;
+                    }
+                }
+            }
             var obj = new {
                 apikey = api_key,
                 userkey = user_key,
@@ -29,27 +50,74 @@ namespace WhichEpisode
             };
             var json = JsonConvert.SerializeObject(obj);
             var data = new StringContent(json, Encoding.UTF8, "application/json");
-            var response = await Client.PostAsync("login", data);
+            var response = await Client.PostAsync("login", data).ConfigureAwait(false);
             if (response.IsSuccessStatusCode) {
                 var tokenResponse = await response.Content.ReadAsAsync<Token>();
                 token = tokenResponse.token;
                 Client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
+                FileController.SaveToken(token);
                 return true;
             }
             else
                 return false;
+
         }
 
-        public static async Task<TVSearchResults> SearchForShow(string show) {
-            TVSearchResults res = null;
-            HttpResponseMessage response = await Client.GetAsync($"search/series?name={HttpUtility.UrlEncode(show)}");
+        public static async Task<SeriesSearchResults> SearchForShow(string show) {
+            SeriesSearchResults res = null;
+            HttpResponseMessage response = await Client.GetAsync($"search/series?name={HttpUtility.UrlEncode(show)}").ConfigureAwait(false);
 
             if (response.IsSuccessStatusCode) {
-                res = await response.Content.ReadAsAsync<TVSearchResults>();
+                res = await response.Content.ReadAsAsync<SeriesSearchResults>();
             }
             return res;
         }
 
+        public static async Task<List<List<Episode>>> GetEpisodes(int seriesID) {
+            List<List<Episode>> returnResult = new List<List<Episode>>();
+            HttpResponseMessage response = await Client.GetAsync($"series/{seriesID}/episodes/summary").ConfigureAwait(false);
+            SeriesEpisodesSummary summary = new SeriesEpisodesSummary(); 
+            if (response.IsSuccessStatusCode) {
+                summary = await response.Content.ReadAsAsync<SeriesEpisodesSummary>();
+            }
+            else {
+                return returnResult;
+            }
 
+            for(int i = 1; i < ((SeriesEpisodesSummary)summary).airedSeasons.Length; i++) {
+                returnResult.Add(new List<Episode>());
+            }
+
+            response = await Client.GetAsync($"series/{seriesID}/episodes").ConfigureAwait(false);
+            SeriesEpisodes res = new SeriesEpisodes();
+            if (response.IsSuccessStatusCode) {
+                res = await response.Content.ReadAsAsync<SeriesEpisodes>();
+            }
+            else {
+                return returnResult;
+            }
+            while (true) {
+                foreach (Episode e in res.data) {
+                    if(e.airedSeason != 0)
+                    returnResult[e.airedSeason-1].Add(e);
+                }
+                if (!res.links.next.HasValue)
+                    break;
+                else {
+                    response = await Client.GetAsync($"series/{seriesID}/episodes?page={res.links.next}").ConfigureAwait(false);
+                    res = new SeriesEpisodes();
+                    if (response.IsSuccessStatusCode) {
+                        res = await response.Content.ReadAsAsync<SeriesEpisodes>();
+                    }
+                    else {
+                        return returnResult;
+                    }
+                }
+            }
+
+            foreach (List<Episode> season in returnResult)
+                season.Sort((a, b) => a.airedEpisodeNumber.CompareTo(b.airedEpisodeNumber));
+            return returnResult;
+        }
     }
 }

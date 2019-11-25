@@ -4,8 +4,8 @@ using System.Text;
 
 namespace WhichEpisode.Models
 {
-    public class TVSearchResults
+    public class SeriesSearchResults
     {
-        public TVSearchResult[] data { get; set; }
+        public SeriesSearchResult[] data { get; set; }
     }
 }
