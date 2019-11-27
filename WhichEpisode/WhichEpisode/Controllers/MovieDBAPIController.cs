@@ -73,22 +73,29 @@ namespace WhichEpisode
             return res;
         }
 
+        public static async Task<SeriesEpisodesSummary> GetSeriesEpisodeSummary(int seriesID) {
+            HttpResponseMessage response = await Client.GetAsync($"series/{seriesID}/episodes/summary").ConfigureAwait(false);
+            SeriesEpisodesSummary summary = new SeriesEpisodesSummary();
+            if (response.IsSuccessStatusCode) {
+                SeriesEpisodeSummaryQuery res = await response.Content.ReadAsAsync<SeriesEpisodeSummaryQuery>();
+                summary = res.data;
+
+            }
+            return summary;
+        }
+
         public static async Task<List<List<Episode>>> GetEpisodes(int seriesID) {
             List<List<Episode>> returnResult = new List<List<Episode>>();
-            HttpResponseMessage response = await Client.GetAsync($"series/{seriesID}/episodes/summary").ConfigureAwait(false);
-            SeriesEpisodesSummary summary = new SeriesEpisodesSummary(); 
-            if (response.IsSuccessStatusCode) {
-                summary = await response.Content.ReadAsAsync<SeriesEpisodesSummary>();
-            }
-            else {
-                return returnResult;
-            }
-
-            for(int i = 1; i < ((SeriesEpisodesSummary)summary).airedSeasons.Length; i++) {
+            SeriesEpisodesSummary summary = await GetSeriesEpisodeSummary(seriesID).ConfigureAwait(false);
+            if (((SeriesEpisodesSummary)summary).airedSeasons.Length == 1) {
                 returnResult.Add(new List<Episode>());
             }
-
-            response = await Client.GetAsync($"series/{seriesID}/episodes").ConfigureAwait(false);
+            else {
+                for (int i = 0; i < ((SeriesEpisodesSummary)summary).airedSeasons.Length - 1; i++) {
+                    returnResult.Add(new List<Episode>());
+                }
+            }
+            HttpResponseMessage response = await Client.GetAsync($"series/{seriesID}/episodes").ConfigureAwait(false);
             SeriesEpisodes res = new SeriesEpisodes();
             if (response.IsSuccessStatusCode) {
                 res = await response.Content.ReadAsAsync<SeriesEpisodes>();
