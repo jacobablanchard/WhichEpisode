@@ -1,0 +1,52 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:d="http://xamarin.com/schemas/2014/forms/design"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:ffimageLoader="clr-namespace:FFImageLoading.Forms;assembly=FFImageLoading.Forms"
+             mc:Ignorable="d"
+             x:Class="WhichEpisode.ShowPicker">
+    <ContentPage.Content>
+        <ScrollView>
+            <StackLayout VerticalOptions="Start">
+                <ffimageLoader:CachedImage x:Name="ShowBanner" Aspect="AspectFit" HeightRequest="200"/>
+                <StackLayout Orientation="Horizontal">
+                    <Label Text="Number of seasons: "/>
+                    <Label x:Name="NumberOfSeasons"/>
+                </StackLayout>
+                <StackLayout Orientation="Horizontal">
+                    <Label Text="Number of Episodes: "/>
+                    <Label x:Name="NumberOfEpisodes" />
+                </StackLayout>
+
+                <StackLayout Orientation="Horizontal">
+                    <Label Text="Include non-standard episodes:" VerticalOptions="Center"/>
+                    <Switch IsToggled="False" x:Name="IncludeNonStandardEpisodes"/>    
+                </StackLayout>
+                
+                <Button Text="Pick an Episode!" Clicked="Button_Clicked"/>
+
+                <StackLayout Orientation="Horizontal" HorizontalOptions="StartAndExpand">
+                    <Label Text="Your episode:"/>
+                    <Label x:Name="EpisodeName"/>
+                </StackLayout>
+                <StackLayout Orientation="Horizontal" HorizontalOptions="StartAndExpand">
+                    <Label Text="Season: "/>
+                    <Label x:Name="SelectedSeason" />
+                </StackLayout>
+                <StackLayout Orientation="Horizontal" HorizontalOptions="StartAndExpand">
+                    <Label Text="Episode: "/>
+                    <Label x:Name="SelectedEpisode"/>
+                </StackLayout>
+                <StackLayout  HorizontalOptions="FillAndExpand" Padding="0">
+                    <ffimageLoader:CachedImage x:Name="EpisodePicture" HeightRequest="200" WidthRequest="300" />
+                </StackLayout>
+                <Label Text="Overview: " HorizontalOptions="StartAndExpand"/>
+                <ScrollView BackgroundColor="#e9e9e9">
+                    <Label x:Name="Overview"/>
+                </ScrollView>
+
+            </StackLayout>
+        </ScrollView>
+    </ContentPage.Content>
+</ContentPage>

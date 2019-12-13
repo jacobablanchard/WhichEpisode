@@ -3,28 +3,33 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:d="http://xamarin.com/schemas/2014/forms/design"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:ffimageLoader="clr-namespace:FFImageLoading.Forms;assembly=FFImageLoading.Forms"
              mc:Ignorable="d"
              x:Class="WhichEpisode.MainPage"
-             xmlns:ffimageloadingsvg="clr-namespace:FFImageLoading.Svg.Forms;assembly=FFImageLoading.Svg.Forms"
-             xmlns:ffimageloading="clr-namespace:FFImageLoading.Forms;assembly=FFImageLoading.Forms">
-    
+             Appearing="ContentPage_Appearing">
+
     <StackLayout>
         <!-- Place new controls here -->
-
-        <ffimageloadingsvg:SvgCachedImage Source="https://upload.wikimedia.org/wikipedia/commons/8/80/The_Office_US_logo.svg"></ffimageloadingsvg:SvgCachedImage>
-        <StackLayout Orientation="Horizontal" VerticalOptions="CenterAnd" HorizontalOptions="CenterAndExpand">
-            <Label Text="Max Number:" VerticalOptions="Center" HorizontalOptions="CenterAndExpand"
-                   FontSize="Large"/>
-            <Entry Placeholder="Enter a number" Keyboard="Numeric" x:Name="EnteredNumber">
-                
-            </Entry> 
-
+        <StackLayout Orientation="Horizontal">
+            <SearchBar Placeholder="TV Show" x:Name="NametoSearch"/>
+            <Button Text="Search" Clicked="Button_Clicked"/>
         </StackLayout>
-        <Button Text="Pick" Clicked="Button_Clicked" />
-        <StackLayout Orientation="Horizontal" Spacing="20">
-            <Label Text="Your Number is: " FontSize="30"/>
-            <Label x:Name="ChosenNumber" FontSize="30"/>
-        </StackLayout>
+
+        <ListView x:Name="TVShowsList" ItemsSource="{Binding Path=TVSearchResults}" RowHeight="100" ItemSelected="TVShowsList_ItemSelected">
+            <ListView.ItemTemplate>
+                <DataTemplate>
+                    <ViewCell>
+                        <StackLayout Orientation="Horizontal">
+                            <ffimageLoader:CachedImage Source="{Binding FullBannerURL}" Aspect="AspectFit"/>
+                            <Label Text="{Binding seriesName}"/>
+                        </StackLayout>
+                    </ViewCell>
+                </DataTemplate>
+            </ListView.ItemTemplate>
+        </ListView>
+
+
+
     </StackLayout>
 
 </ContentPage>
