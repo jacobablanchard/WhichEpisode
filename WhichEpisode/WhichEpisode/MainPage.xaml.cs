@@ -24,6 +24,8 @@ namespace WhichEpisode
             Task<bool> temp = MovieDBAPIController.Initialize();
             if (!temp.Result)
                 DisplayAlert("Error","Error authenticating","OK");
+            NametoSearch.SearchButtonPressed += Button_Clicked;
+            this.Title = "Which Episode?";
         }
 
         private async void Button_Clicked(object sender, EventArgs e) {

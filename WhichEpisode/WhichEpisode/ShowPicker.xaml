@@ -19,6 +19,11 @@
                     <Label x:Name="NumberOfEpisodes" />
                 </StackLayout>
 
+                <StackLayout Orientation="Horizontal">
+                    <Label Text="Include non-standard episodes:" VerticalOptions="Center"/>
+                    <Switch IsToggled="False" x:Name="IncludeNonStandardEpisodes"/>    
+                </StackLayout>
+                
                 <Button Text="Pick an Episode!" Clicked="Button_Clicked"/>
 
                 <StackLayout Orientation="Horizontal" HorizontalOptions="StartAndExpand">

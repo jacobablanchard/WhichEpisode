@@ -24,10 +24,9 @@ namespace WhichEpisode
             Client.DefaultRequestHeaders.Accept.Clear();
             Client.DefaultRequestHeaders.Accept.Add(new System.Net.Http.Headers.MediaTypeWithQualityHeaderValue("application/json"));
             // Get a token
-            bool performAPICall = true;
             if (FileController.DoesTokenFileExist()) {
                 TimeSpan res = DateTime.Now - FileController.GetTokenDate();
-                if (res.Hours < 24) {
+                if (res.TotalHours < 24) {
                     Client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", FileController.GetToken());
                     HttpResponseMessage requestResult = await Client.GetAsync("refresh_token").ConfigureAwait(false);
                     if (requestResult.IsSuccessStatusCode) {
@@ -35,7 +34,6 @@ namespace WhichEpisode
                         token = newTokenResponse.token;
                         Client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
                         FileController.SaveToken(token);
-                        performAPICall = false;
                         return true;
                     }
                     else {
@@ -91,7 +89,7 @@ namespace WhichEpisode
                 returnResult.Add(new List<Episode>());
             }
             else {
-                for (int i = 0; i < ((SeriesEpisodesSummary)summary).airedSeasons.Length - 1; i++) {
+                for (int i = 0; i < ((SeriesEpisodesSummary)summary).airedSeasons.Length; i++) {
                     returnResult.Add(new List<Episode>());
                 }
             }
@@ -105,8 +103,12 @@ namespace WhichEpisode
             }
             while (true) {
                 foreach (Episode e in res.data) {
-                    if(e.airedSeason != 0)
-                    returnResult[e.airedSeason-1].Add(e);
+                    try {
+                        returnResult[e.airedSeason].Add(e);
+                    }
+                    catch {
+                        Console.WriteLine();
+                    }
                 }
                 if (!res.links.next.HasValue)
                     break;

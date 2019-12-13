@@ -40,10 +40,10 @@ namespace WhichEpisode
 
         private void Button_Clicked(object sender, EventArgs e) {
             Random generator = new Random();
-            int chosenSeason = generator.Next(0, Seasons.Count);
+            int chosenSeason = generator.Next(IncludeNonStandardEpisodes.IsToggled ? 0 : 1, Seasons.Count);
             int chosenEpisode = generator.Next(0, Seasons[chosenSeason].Count);
             EpisodeName.Text = Seasons[chosenSeason][chosenEpisode].episodeName;
-            SelectedSeason.Text = (chosenSeason+1).ToString();
+            SelectedSeason.Text = (chosenSeason).ToString();
             SelectedEpisode.Text = (chosenEpisode+1).ToString();
             Overview.Text = Seasons[chosenSeason][chosenEpisode].overview;
             EpisodePicture.Source = ImageSource.FromUri(new Uri("https://thetvdb.com/banners/" +$"{Seasons[chosenSeason][chosenEpisode].filename}"));
