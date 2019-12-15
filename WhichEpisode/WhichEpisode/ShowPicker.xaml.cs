@@ -40,8 +40,22 @@ namespace WhichEpisode
 
         private void Button_Clicked(object sender, EventArgs e) {
             Random generator = new Random();
-            int chosenSeason = generator.Next(IncludeNonStandardEpisodes.IsToggled ? 0 : 1, Seasons.Count);
+            int lowerSeasonBound;
+            if (IncludeNonStandardEpisodes.IsToggled) {
+                if (Seasons[0].Count > 0)
+                    lowerSeasonBound = 0;
+                else
+                    lowerSeasonBound = 1;
+            }
+            else {
+                lowerSeasonBound = 1;
+            }
+            int chosenSeason = generator.Next(lowerSeasonBound, Seasons.Count);
             int chosenEpisode = generator.Next(0, Seasons[chosenSeason].Count);
+            while(Seasons[chosenSeason].Count == 0) {
+                chosenSeason = generator.Next(lowerSeasonBound, Seasons.Count);
+                chosenEpisode = generator.Next(0, Seasons[chosenSeason].Count);
+            }
             EpisodeName.Text = Seasons[chosenSeason][chosenEpisode].episodeName;
             SelectedSeason.Text = (chosenSeason).ToString();
             SelectedEpisode.Text = (chosenEpisode+1).ToString();

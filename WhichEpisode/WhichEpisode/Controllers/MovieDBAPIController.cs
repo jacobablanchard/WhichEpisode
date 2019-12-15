@@ -89,7 +89,7 @@ namespace WhichEpisode
                 returnResult.Add(new List<Episode>());
             }
             else {
-                for (int i = 0; i < ((SeriesEpisodesSummary)summary).airedSeasons.Length; i++) {
+                for (int i = 0; i <= ((SeriesEpisodesSummary)summary).airedSeasons.Length; i++) {
                     returnResult.Add(new List<Episode>());
                 }
             }
