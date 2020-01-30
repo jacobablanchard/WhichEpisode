@@ -17,24 +17,38 @@ namespace WhichEpisode
     {
         public SeriesSearchResult TVSeries { get; set; }
         public List<List<Episode>> Seasons { get; set; }
+        public Command AddToFavoritesCommand { get; set; }
 
         public ShowPicker(SeriesSearchResult tvseries) {
             InitializeComponent();
             TVSeries = tvseries;
-            Task temp = initEpisodes();
+            Task temp = InitEpisodes();
             temp.Wait();
             //List<List<Episode>> task = await MovieDBAPIController.GetEpisodes(TVSeries.id);
             //Seasons = task.Result;
-            ShowBanner.Source = ImageSource.FromUri(new Uri(tvseries.FullBannerURL));
+            ShowBanner.Source = ImageSource.FromUri(new Uri(tvseries.FullPosterURL));
             NumberOfSeasons.Text = Seasons.Count.ToString();
             int numEpisodes = 0;
             foreach(List<Episode> Season in Seasons) {
                 numEpisodes += Season.Count;
             }
             NumberOfEpisodes.Text = numEpisodes.ToString();
+            AddToFavoritesCommand = new Command(AddToFavorites);
+            AddToFavoritesToolbarButton.Command = AddToFavoritesCommand;
         }
 
-        private async Task initEpisodes() {
+        public async void AddToFavorites() {
+            bool res = FileController.SaveFavorite(TVSeries);
+            if (res)
+                await DisplayAlert("Success", "Favorite added successfully", "OK");
+            else {
+                res = await DisplayAlert("Remove?", "Favorite already added. Remove?", "Yes", "No");
+                if (res)
+                    FileController.DeleteFavorite(TVSeries);
+            }
+        }
+
+        private async Task InitEpisodes() {
             Seasons = await MovieDBAPIController.GetEpisodes(TVSeries.id).ConfigureAwait(false);
         }
 

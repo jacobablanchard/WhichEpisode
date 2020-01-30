@@ -7,7 +7,9 @@
              mc:Ignorable="d"
              x:Class="WhichEpisode.MainPage"
              Appearing="ContentPage_Appearing">
-
+    <ContentPage.ToolbarItems>
+        <ToolbarItem Text="Favorites" Command="{Binding FavoritesButtonCommand}" x:Name="ToolbarFavoritesButton"/>
+    </ContentPage.ToolbarItems>
     <StackLayout>
         <!-- Place new controls here -->
         <StackLayout Orientation="Horizontal">
@@ -20,7 +22,7 @@
                 <DataTemplate>
                     <ViewCell>
                         <StackLayout Orientation="Horizontal">
-                            <ffimageLoader:CachedImage Source="{Binding FullBannerURL}" Aspect="AspectFit"/>
+                            <ffimageLoader:CachedImage Source="{Binding FullPosterURL}" Aspect="AspectFit"/>
                             <Label Text="{Binding seriesName}"/>
                         </StackLayout>
                     </ViewCell>

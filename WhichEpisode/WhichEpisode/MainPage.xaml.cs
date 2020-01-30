@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 using Xamarin.Forms;
 using WhichEpisode.Controllers;
 using WhichEpisode.Models;
-
+using System.Diagnostics;
 
 namespace WhichEpisode
 {
@@ -19,6 +19,7 @@ namespace WhichEpisode
         private bool doNavigation = true;
 
         List<SeriesSearchResult> TVSearchResults;
+        public Command FavoritesButtonCommand { get; set; }
         public MainPage() {
             InitializeComponent();
             TVSearchResults = new List<SeriesSearchResult>();
@@ -26,7 +27,9 @@ namespace WhichEpisode
             if (!temp.Result)
                 DisplayAlert("Error","Error authenticating","OK");
             NametoSearch.SearchButtonPressed += Button_Clicked;
+            ToolbarFavoritesButton.Clicked += ShowFavorites;
             this.Title = "Which Episode?";
+            Debug.WriteLine("Saving files to " + Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData));
         }
 
         private async void Button_Clicked(object sender, EventArgs e) {
@@ -46,5 +49,16 @@ namespace WhichEpisode
             if(doNavigation)
                 Navigation.PushAsync(new ShowPicker((SeriesSearchResult)TVShowsList.SelectedItem));
         }
+        private void ShowFavorites(object sender, EventArgs e) {
+            doNavigation = false;
+            List<SeriesSearchResult> temp = FileController.GetFavorites();
+            if (temp == null)
+                DisplayAlert("No Favorites", "You do not have any favorites saved", "OK");
+            else {
+                TVShowsList.ItemsSource = temp;
+            }
+            doNavigation = true;
+        }
+
     }
 }

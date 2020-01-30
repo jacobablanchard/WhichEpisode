@@ -6,7 +6,11 @@
              xmlns:ffimageLoader="clr-namespace:FFImageLoading.Forms;assembly=FFImageLoading.Forms"
              mc:Ignorable="d"
              x:Class="WhichEpisode.ShowPicker">
+    <ContentPage.ToolbarItems>
+        <ToolbarItem Text="Add To Favorites" x:Name="AddToFavoritesToolbarButton"/>
+    </ContentPage.ToolbarItems>
     <ContentPage.Content>
+        
         <ScrollView>
             <StackLayout VerticalOptions="Start">
                 <ffimageLoader:CachedImage x:Name="ShowBanner" Aspect="AspectFit" HeightRequest="200"/>
